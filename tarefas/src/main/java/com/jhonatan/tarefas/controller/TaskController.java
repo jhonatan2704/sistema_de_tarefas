@@ -24,6 +24,16 @@ public class TaskController {
         return taskService.listarTarefas();
     }
 
+    @GetMapping("/concluidas")
+    public List<TaskEntity> tarefasconcluidas() {
+        return taskService.listarTarefasConcluidas();
+    }
+
+    @GetMapping("incompletas")
+    public List<TaskEntity> tarefasNaoconcluidas() {
+        return taskService.listarTarefasNaoConcluidas();
+    }
+
     @PostMapping("/adicionar")
     public ResponseEntity<TaskEntity> novaTarefa(@RequestBody TaskEntity task) {
         taskService.criarNovaTarefa(task);
@@ -32,21 +42,21 @@ public class TaskController {
     }
 
     @PutMapping("/atualizarLista/{id}")
-    public ResponseEntity<TaskEntity> atualizarTarefa(@PathVariable Integer id,
+    public ResponseEntity<TaskEntity> atualizarTarefa(@PathVariable Long id,
             @RequestBody TaskEntity task) {
         taskService.atualizarTarefa(id, task);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
     @PatchMapping("/atualizarValor/{id}")
-    public ResponseEntity<TaskEntity> atualizarValor(@PathVariable Integer id,
+    public ResponseEntity<TaskEntity> atualizarValor(@PathVariable Long id,
             @RequestBody TaskEntity task) {
         taskService.atualizarValorTarefa(id, task);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/deletarTarefa/{id}")
-    public ResponseEntity<TaskEntity> deletarTarefa(@PathVariable Integer id) {
+    public ResponseEntity<TaskEntity> deletarTarefa(@PathVariable Long id) {
         taskService.deletarTarefa(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

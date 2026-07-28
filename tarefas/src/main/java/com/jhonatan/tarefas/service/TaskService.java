@@ -3,8 +3,12 @@ package com.jhonatan.tarefas.service;
 import com.jhonatan.tarefas.database.model.TaskEntity;
 import com.jhonatan.tarefas.database.repository.TaskRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -12,6 +16,7 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private List<TaskEntity> listaDeTarefas = new ArrayList<>();
 
 
     public void criarNovaTarefa(TaskEntity task) {
@@ -22,18 +27,31 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public void atualizarTarefa(Integer id, TaskEntity task) {
-        List<TaskEntity> tarefas = listarTarefas();
-        TaskEntity tarefasAtualizadas = tarefas.stream().filter(t -> t.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada!"));
-        tarefasAtualizadas.setTitulo(task.getTitulo());
-        tarefasAtualizadas.setDescricao(task.getDescricao());
-        tarefasAtualizadas.setStatus(task.getStatus());
-        taskRepository.save(tarefasAtualizadas);
+    public List<TaskEntity> listarTarefasConcluidas() {
+        listaDeTarefas = taskRepository.findAll().stream()
+                .filter(TaskEntity::getStatus)
+                .toList();
+        return listaDeTarefas;
     }
 
-    public void atualizarValorTarefa(Integer id, TaskEntity task) {
+    public List<TaskEntity> listarTarefasNaoConcluidas() {
+        listaDeTarefas = taskRepository.findAll().stream()
+                .filter(t -> !t.getStatus())
+                .toList();
+        return listaDeTarefas;
+    }
+
+    public void atualizarTarefa(Long id, TaskEntity task) {
+        TaskEntity tarefaExistente = taskRepository.findById((id))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Tarefa não encontrada com o ID: " + id));
+
+        tarefaExistente.setTitulo(task.getTitulo());
+        tarefaExistente.setDescricao(task.getDescricao());
+        tarefaExistente.setStatus(task.getStatus());
+        taskRepository.save(tarefaExistente);
+    }
+
+    public void atualizarValorTarefa(Long id, TaskEntity task) {
         List<TaskEntity> tarefas = listarTarefas();
         TaskEntity tarefasAtualizadas = tarefas.stream().filter(t -> t.getId().equals(id))
                 .findFirst()
@@ -51,7 +69,7 @@ public class TaskService {
         taskRepository.save(tarefasAtualizadas);
     }
 
-    public void deletarTarefa(Integer id) {
+    public void deletarTarefa(Long id) {
         if (!taskRepository.existsById(id)) {
             throw new RuntimeException("Tarefa não encotrada para exclusão!");
         }
