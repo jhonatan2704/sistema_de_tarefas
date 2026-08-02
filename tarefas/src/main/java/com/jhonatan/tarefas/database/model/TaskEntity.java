@@ -18,6 +18,6 @@ public class TaskEntity {
     private String titulo;
     @Column(length = 100, nullable = false)
     private String descricao;
-    @Column(nullable = false)
-    private Boolean status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 }

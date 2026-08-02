@@ -1,10 +1,9 @@
 package com.jhonatan.tarefas.controller;
 
+import com.jhonatan.tarefas.database.model.Status;
 import com.jhonatan.tarefas.database.model.TaskEntity;
-import com.jhonatan.tarefas.database.repository.TaskRepository;
 import com.jhonatan.tarefas.service.TaskService;
-import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +19,19 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping
+    @Operation(summary = "Lista todas as tarefas")
     public List<TaskEntity> findAll() {
         return taskService.listarTarefas();
     }
 
-    @GetMapping("/concluidas")
-    public List<TaskEntity> tarefasconcluidas() {
-        return taskService.listarTarefasConcluidas();
-    }
-
-    @GetMapping("incompletas")
-    public List<TaskEntity> tarefasNaoconcluidas() {
-        return taskService.listarTarefasNaoConcluidas();
+    @GetMapping("/busca/{status}")
+    @Operation(summary = "Lista tarefas por status")
+    public List<TaskEntity> findByStatus(@PathVariable Status status) {
+        return taskService.listarTarefasPorStatus(status);
     }
 
     @PostMapping("/adicionar")
+    @Operation(summary = "Adiciona nova tarefa")
     public ResponseEntity<TaskEntity> novaTarefa(@RequestBody TaskEntity task) {
         taskService.criarNovaTarefa(task);
 
@@ -42,6 +39,7 @@ public class TaskController {
     }
 
     @PutMapping("/atualizarLista/{id}")
+    @Operation(summary = "Atualiza tarefa")
     public ResponseEntity<TaskEntity> atualizarTarefa(@PathVariable Long id,
             @RequestBody TaskEntity task) {
         taskService.atualizarTarefa(id, task);
@@ -49,6 +47,7 @@ public class TaskController {
     }
 
     @PatchMapping("/atualizarValor/{id}")
+    @Operation(summary = "Atualiza um campo da tarefa")
     public ResponseEntity<TaskEntity> atualizarValor(@PathVariable Long id,
             @RequestBody TaskEntity task) {
         taskService.atualizarValorTarefa(id, task);
@@ -56,6 +55,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/deletarTarefa/{id}")
+    @Operation(summary = "Deleta tarefa")
     public ResponseEntity<TaskEntity> deletarTarefa(@PathVariable Long id) {
         taskService.deletarTarefa(id);
 

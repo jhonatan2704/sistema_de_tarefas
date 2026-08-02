@@ -1,10 +1,10 @@
 package com.jhonatan.tarefas.service;
 
+import com.jhonatan.tarefas.database.model.Status;
 import com.jhonatan.tarefas.database.model.TaskEntity;
 import com.jhonatan.tarefas.database.repository.TaskRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,18 +27,10 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    public List<TaskEntity> listarTarefasConcluidas() {
-        listaDeTarefas = taskRepository.findAll().stream()
-                .filter(TaskEntity::getStatus)
+    public List<TaskEntity> listarTarefasPorStatus(Status status) {
+        return taskRepository.findAll().stream()
+                .filter(t -> t.getStatus() == status)
                 .toList();
-        return listaDeTarefas;
-    }
-
-    public List<TaskEntity> listarTarefasNaoConcluidas() {
-        listaDeTarefas = taskRepository.findAll().stream()
-                .filter(t -> !t.getStatus())
-                .toList();
-        return listaDeTarefas;
     }
 
     public void atualizarTarefa(Long id, TaskEntity task) {
