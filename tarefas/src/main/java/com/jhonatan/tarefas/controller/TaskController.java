@@ -2,6 +2,7 @@ package com.jhonatan.tarefas.controller;
 
 import com.jhonatan.tarefas.database.model.Status;
 import com.jhonatan.tarefas.database.model.TaskEntity;
+import com.jhonatan.tarefas.dto.TaskDto;
 import com.jhonatan.tarefas.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class TaskController {
 
     @PostMapping("/adicionar")
     @Operation(summary = "Adiciona nova tarefa")
-    public ResponseEntity<TaskEntity> novaTarefa(@RequestBody TaskEntity task) {
+    public ResponseEntity<TaskDto> novaTarefa(@RequestBody TaskDto task) {
         taskService.criarNovaTarefa(task);
 
         return new ResponseEntity<>(task, HttpStatus.CREATED);
@@ -40,16 +41,16 @@ public class TaskController {
 
     @PutMapping("/atualizarLista/{id}")
     @Operation(summary = "Atualiza tarefa")
-    public ResponseEntity<TaskEntity> atualizarTarefa(@PathVariable Long id,
-            @RequestBody TaskEntity task) {
+    public ResponseEntity<TaskDto> atualizarTarefa(@PathVariable Long id,
+                                                   @RequestBody TaskDto task) {
         taskService.atualizarTarefa(id, task);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
 
     @PatchMapping("/atualizarValor/{id}")
     @Operation(summary = "Atualiza um campo da tarefa")
-    public ResponseEntity<TaskEntity> atualizarValor(@PathVariable Long id,
-            @RequestBody TaskEntity task) {
+    public ResponseEntity<TaskDto> atualizarValor(@PathVariable Long id,
+            @RequestBody TaskDto task) {
         taskService.atualizarValorTarefa(id, task);
         return new ResponseEntity<>(task, HttpStatus.CREATED);
     }
